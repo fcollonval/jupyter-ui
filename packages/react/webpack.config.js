@@ -9,28 +9,29 @@ const path = require("path");
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
-  
+
 const shimJS = path.resolve(__dirname, "src", "emptyshim.js");
 
 function shim(regExp) {
   return new webpack.NormalModuleReplacementPlugin(regExp, shimJS);
 }
 
-const ENTRY =
-// "./src/app/App";
-"./src/examples/Cell";
-// "./src/examples/JupyterLabApp";
-// "./src/examples/JupyterLabHeadlessApp";
-// "./src/examples/Lumino";
-// "./src/examples/Matplotlib";
-// "./src/examples/Notebook";
-// "./src/examples/NotebookKernelChange";
-// "./src/examples/NotebookModel";
-// "./src/examples/NotebookModelChange";
-// "./src/examples/NotebookThemed";
-// "./src/examples/RunningSessions";
-// "./src/examples/Terminal";
-// "./src/examples/Viewer";
+const ENTRY = process.env.JP_EXAMPLE ? `./src/examples/${process.env.JP_EXAMPLE}` :
+  // "./src/app/App";
+  // "./src/examples/Cell";
+  "./src/examples/IPyWidgets";
+  // "./src/examples/JupyterLabApp";
+  // "./src/examples/JupyterLabHeadlessApp";
+  // "./src/examples/Lumino";
+  // "./src/examples/Matplotlib";
+  // "./src/examples/Notebook";
+  // "./src/examples/NotebookKernelChange";
+  // "./src/examples/NotebookModel";
+  // "./src/examples/NotebookModelChange";
+  // "./src/examples/NotebookThemed";
+  // "./src/examples/RunningSessions";
+  // "./src/examples/Terminal";
+  // "./src/examples/Viewer";
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == "true";
 // const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL ? "http://localhost:8686" : "https://oss.datalayer.tech";
@@ -97,11 +98,11 @@ module.exports = {
     filename: '[name].jupyter-react.js',
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', 'jsx', '.js' ],
-    alias: { 
+    extensions: ['.tsx', '.ts', 'jsx', '.js'],
+    alias: {
       "stream": "stream-browserify",
     },
-    fallback: { 
+    fallback: {
       "assert": require.resolve("assert/"),
     }
   },
@@ -122,9 +123,9 @@ module.exports = {
           ],
           presets: [
             ["@babel/preset-react", {
-                runtime: 'automatic',
-                importSource: 'react'
-              },
+              runtime: 'automatic',
+              importSource: 'react'
+            },
             ],
             "@babel/preset-typescript",
           ],
@@ -191,7 +192,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       title: 'Jupyter React',
-      template : 'public/' + INDEX_PAGE,
+      template: 'public/' + INDEX_PAGE,
     }),
     new HtmlWebpackTagsPlugin({
       links: [
@@ -199,9 +200,9 @@ module.exports = {
         'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap',
       ],
       tags: [
-//        'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js'
+        //        'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js'
       ],
-      append: false, 
+      append: false,
       publicPath: false
     }),
   ]

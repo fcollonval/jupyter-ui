@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, FC } from "react";
 import { createPortal } from "react-dom";
 import { useDispatch } from "react-redux";
 import { Box } from "@primer/react";
@@ -32,26 +32,36 @@ export type BundledIPyWidgets = ExternalIPyWidgets & {
   module: any;
 }
 
+/**
+ * {@link Notebook} components properties
+ */
 export type INotebookProps = {
-  cellMetadataPanel: boolean;
-  cellSidebarMargin: number;
+  /**
+   * Whether it has a cell metadata panel or not.
+   */
+  cellMetadataPanel?: boolean;
+  cellSidebarMargin?: number;
   height?: string;
+  maxHeight?: string;
   /*
    * @deprecated since version 0.6.2
    */
-  ipywidgets: 'classic' | 'lab';
+  ipywidgets?: 'classic' | 'lab';
   bundledIPyWidgets?: BundledIPyWidgets[];
   externalIPyWidgets?: ExternalIPyWidgets[];
+
   kernel?: Kernel;
-  maxHeight?: string;
   nbformat?: INotebookContent;
-  nbgrader: boolean;
+  nbgrader?: boolean;
   path?: string;
-  readOnly: boolean;
-  renderers: IRenderMime.IRendererFactory[];
+  readOnly?: boolean;
+  renderers?: IRenderMime.IRendererFactory[];
+  /**
+   * Notebook document unique identifier
+   */
   uid: string
   CellSidebar?: (props: CellSidebarProps) => JSX.Element;
-  Toolbar?: (props: any) => JSX.Element;
+  Toolbar?: (props: { notebookId: string }) => JSX.Element;
 }
 
 /**
@@ -61,11 +71,26 @@ export type INotebookProps = {
  * @param props The notebook properties.
  * @returns A Notebook React.js component.
  */
-export const Notebook = (props: INotebookProps) => {
+export const Notebook: FC<INotebookProps> = (props: INotebookProps) => {
   const { serviceManager, defaultKernel, kernelManager, injectableStore } = useJupyter();
-  const { path, kernel: propsKernel, readOnly, nbgrader, height, maxHeight, nbformat, Toolbar } = props;
+  const {
+    cellMetadataPanel = false,
+    cellSidebarMargin = 120,
+    height = '100vh',
+    maxHeight = '100vh',
+    ipywidgets = 'lab',
+    bundledIPyWidgets,
+    externalIPyWidgets,
+    kernel = defaultKernel,
+    nbformat,
+    nbgrader = false,
+    path,
+    readOnly = false,
+    renderers = [],
+    Toolbar,
+    CellSidebar,
+  } = props;
   const [uid] = useState(props.uid || newUuid());
-  const kernel = propsKernel || defaultKernel;
   const dispatch = useDispatch();
   const portals = selectNotebookPortals(uid);
   const [adapter, setAdapter] = useState<NotebookAdapter>();
@@ -74,9 +99,22 @@ export const Notebook = (props: INotebookProps) => {
       kernel.ready.then(() => {
         const adapter = new NotebookAdapter(
           {
-            ...props,
+            cellMetadataPanel,
+            cellSidebarMargin,
+            height,
+            maxHeight,
+            ipywidgets,
+            bundledIPyWidgets,
+            externalIPyWidgets,
             kernel,
+            nbformat,
+            nbgrader,
+            path,
+            readOnly,
+            renderers,
             uid,
+            CellSidebar,
+            Toolbar,
           },
           injectableStore,
           serviceManager,
@@ -114,7 +152,7 @@ export const Notebook = (props: INotebookProps) => {
             dispatch(notebookActions.notebookChange({ uid, notebookChange }));
           });
           adapter.notebookPanel?.content.modelChanged.connect((notebook, _) => {
-            dispatÅch(notebookActions.notebookChange({ uid, notebook }));
+            dispatch(notebookActions.notebookChange({ uid, notebook }));
           });
           */
           adapter.notebookPanel?.content.activeCellChanged.connect((_, cellModel) => {
@@ -153,7 +191,7 @@ export const Notebook = (props: INotebookProps) => {
   return (
     <div style={{ height, width: '100%', position: "relative" }} id="dla-Jupyter-Notebook">
       {
-        Toolbar && <Toolbar notebookId={props.uid} />
+        Toolbar && <Toolbar notebookId={uid} />
       }
       <Box className="dla-Box-Notebook"
         sx={{
@@ -189,20 +227,20 @@ export const Notebook = (props: INotebookProps) => {
             display: 'none',
           },
           '& .jp-Cell': {
-            width: `calc(100% - ${props.cellSidebarMargin}px)`,
+            width: `calc(100% - ${cellSidebarMargin}px)`,
           },
           '& .jp-Notebook-footer': {
-            width: `calc(100% - ${props.cellSidebarMargin + 82}px)`,
+            width: `calc(100% - ${cellSidebarMargin + 82}px)`,
           },
           '& .jp-Cell .jp-CellHeader': {
             position: 'absolute',
             top: '-5px',
-            left: `${props.cellSidebarMargin + 10}px`,
+            left: `${cellSidebarMargin + 10}px`,
             height: 'auto',
           },
           '& .jp-Cell .dla-CellHeader-Container': {
             padding: '4px 8px',
-            width: `${props.cellSidebarMargin + 10}px`,
+            width: `${cellSidebarMargin + 10}px`,
             marginLeft: 'auto',
           },
           '& .jp-CodeMirrorEditor': {
@@ -214,25 +252,15 @@ export const Notebook = (props: INotebookProps) => {
         }}
       >
         <>
-          { portals?.map((portal: React.ReactPortal) => portal) }
+          {portals?.map((portal: React.ReactPortal) => portal)}
         </>
         <Box>
-          { adapter && <Lumino id={path}>{adapter.panel}</Lumino> }
+          {adapter && <Lumino id={path}>{adapter.panel}</Lumino>}
         </Box>
       </Box >
     </div>
   )
 }
 
-Notebook.defaultProps = {
-  cellMetadataPanel: false,
-  cellSidebarMargin: 120,
-  height: '100vh',
-  ipywidgets: 'lab',
-  maxHeight: '100vh',
-  nbgrader: false,
-  readOnly: false,
-  renderers: [],
-} as Partial<INotebookProps>;
 
 export default Notebook;

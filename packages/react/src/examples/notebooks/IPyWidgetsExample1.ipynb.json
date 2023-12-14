@@ -7,21 +7,22 @@
    "metadata": {},
    "outputs": [
     {
-      "data": {
-        "application/vnd.jupyter.widget-view+json": {
-        "model_id": "c686864a5ad44793b53c9cf1b112fafe",
-        "version_major": 2,
-        "version_minor": 0
+     "data": {
+      "application/vnd.jupyter.widget-view+json": {
+       "model_id": "c686864a5ad44793b53c9cf1b112fafe",
+       "version_major": 2,
+       "version_minor": 0
       },
       "text/plain": [
+       "IntSlider(value=0)"
       ]
-    },
-    "metadata": {},
-    "output_type": "display_data"
+     },
+          "metadata": {},
+     "output_type": "execute_result"
     }
-  ],
+   ],
    "source": [
-    "import ipywidgets as widgets",
+    "import ipywidgets as widgets\n",
     "widgets.IntSlider()"
    ]
   },
@@ -61,10 +62,10 @@
     }
    ],
    "source": [
-    "from IPython.display import display",
-    "a = widgets.FloatText()",
-    "b = widgets.FloatSlider()",
-    "display(a,b)",
+    "from IPython.display import display\n",
+    "a = widgets.FloatText()\n",
+    "b = widgets.FloatSlider()\n",
+    "display(a,b)\n",
     "mylink = widgets.jslink((a, 'value'), (b, 'value'))"
    ]
   },
@@ -103,7 +104,106 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.11.4"
+   "version": "3.12.0"
+  },
+  "widgets": {
+   "application/vnd.jupyter.widget-state+json": {
+    "state": {
+     "189577318851428bb6cbaa166cb60dc6": {
+      "model_module": "@jupyter-widgets/controls",
+      "model_module_version": "2.0.0",
+      "model_name": "SliderStyleModel",
+      "state": {
+       "description_width": ""
+      }
+     },
+     "2a46d5a839e74ae3ad1a44eace48c244": {
+      "model_module": "@jupyter-widgets/controls",
+      "model_module_version": "2.0.0",
+      "model_name": "IntSliderModel",
+      "state": {
+       "behavior": "drag-tap",
+       "layout": "IPY_MODEL_3ca0ec97f73642ebab92222e4a2d4ea5",
+       "style": "IPY_MODEL_189577318851428bb6cbaa166cb60dc6",
+       "value": 21
+      }
+     },
+     "2a76162fd61e40638537599c191c6050": {
+      "model_module": "@jupyter-widgets/controls",
+      "model_module_version": "2.0.0",
+      "model_name": "DescriptionStyleModel",
+      "state": {
+       "description_width": ""
+      }
+     },
+     "2c809efb7acb4b7ba5d040a2e6e00ed6": {
+      "model_module": "@jupyter-widgets/controls",
+      "model_module_version": "2.0.0",
+      "model_name": "FloatTextModel",
+      "state": {
+       "layout": "IPY_MODEL_9631a814fa7d4f67ac6207032dbbfbc5",
+       "step": null,
+       "style": "IPY_MODEL_2a76162fd61e40638537599c191c6050",
+       "value": 8.5
+      }
+     },
+     "3ca0ec97f73642ebab92222e4a2d4ea5": {
+      "model_module": "@jupyter-widgets/base",
+      "model_module_version": "2.0.0",
+      "model_name": "LayoutModel",
+      "state": {}
+     },
+     "4eda4adbed2e4a0ca77041005b3b0e13": {
+      "model_module": "@jupyter-widgets/controls",
+      "model_module_version": "2.0.0",
+      "model_name": "FloatSliderModel",
+      "state": {
+       "behavior": "drag-tap",
+       "layout": "IPY_MODEL_abe2b3a66d444c10802f6be2fb0c07bb",
+       "step": 0.1,
+       "style": "IPY_MODEL_d10c8f0a7c09469eb19f4bf7977b37a4",
+       "value": 8.5
+      }
+     },
+     "9149cad9c27a4c11967c8746009060e2": {
+      "model_module": "@jupyter-widgets/controls",
+      "model_module_version": "2.0.0",
+      "model_name": "LinkModel",
+      "state": {
+       "source": [
+        "IPY_MODEL_2c809efb7acb4b7ba5d040a2e6e00ed6",
+        "value"
+       ],
+       "target": [
+        "IPY_MODEL_4eda4adbed2e4a0ca77041005b3b0e13",
+        "value"
+       ]
+      }
+     },
+     "9631a814fa7d4f67ac6207032dbbfbc5": {
+      "model_module": "@jupyter-widgets/base",
+      "model_module_version": "2.0.0",
+      "model_name": "LayoutModel",
+      "state": {}
+     },
+     "abe2b3a66d444c10802f6be2fb0c07bb": {
+      "model_module": "@jupyter-widgets/base",
+      "model_module_version": "2.0.0",
+      "model_name": "LayoutModel",
+      "state": {}
+     },
+     "d10c8f0a7c09469eb19f4bf7977b37a4": {
+      "model_module": "@jupyter-widgets/controls",
+      "model_module_version": "2.0.0",
+      "model_name": "SliderStyleModel",
+      "state": {
+       "description_width": ""
+      }
+     }
+    },
+    "version_major": 2,
+    "version_minor": 0
+   }
   }
  },
  "nbformat": 4,

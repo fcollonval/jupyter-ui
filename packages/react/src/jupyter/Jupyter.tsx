@@ -4,11 +4,11 @@
  * MIT License
  */
 
-import React, { useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { ThemeProvider, BaseStyles, Box } from "@primer/react";
 import { ErrorBoundary } from 'react-error-boundary';
 import { JupyterContextProvider } from './JupyterContext';
-import JupyterLabCss  from './lab/JupyterLabCss';
+import JupyterLabCss from './lab/JupyterLabCss';
 import { getJupyterServerHttpUrl, getJupyterServerWsUrl, loadJupyterConfig } from './JupyterConfig';
 import defaultInjectableStore, { InjectableStore } from '../state/redux/Store';
 import { JupyterLabTheme } from "./lab/JupyterLabTheme";
@@ -18,18 +18,17 @@ import { JupyterLabTheme } from "./lab/JupyterLabTheme";
  * when creating a Jupyter context.
  */
 export type JupyterProps = {
-  children?: React.ReactNode;
   collaborative?: boolean;
-  defaultKernelName: string;
+  defaultKernelName?: string;
   disableCssLoading?: boolean;
   injectableStore?: InjectableStore;
   jupyterServerHttpUrl?: string;
   jupyterServerWsUrl?: string;
   jupyterToken?: string;
   lite?: boolean;
-  startDefaultKernel: boolean;
+  startDefaultKernel?: boolean;
   terminals?: boolean;
-  theme: JupyterLabTheme;
+  theme?: JupyterLabTheme;
   useRunningKernelId?: string;
   useRunningKernelIndex?: number;
 }
@@ -37,7 +36,7 @@ export type JupyterProps = {
 /**
  * The component to be used as fallback in case of error.
  */
-const ErrorFallback = ({error, resetErrorBoundary}: any) => {
+const ErrorFallback = ({ error, resetErrorBoundary }: any) => {
   return (
     <div role="alert">
       <p>Oops, something went wrong.</p>
@@ -54,14 +53,34 @@ const ErrorFallback = ({error, resetErrorBoundary}: any) => {
  * and ensure the Redux and the Material UI theme providers
  * are available.
  */
-export const Jupyter = (props: JupyterProps) => {
+export const Jupyter: FC<React.PropsWithChildren<JupyterProps>> = (props: React.PropsWithChildren<JupyterProps>) => {
   const {
-    lite, collaborative, startDefaultKernel, defaultKernelName, injectableStore, theme,
-    useRunningKernelId, useRunningKernelIndex, children, disableCssLoading,
+    collaborative = false,
+    children,
+    defaultKernelName = 'python',
+    disableCssLoading = false,
+    injectableStore,
+    jupyterServerHttpUrl,
+    jupyterServerWsUrl,
+    jupyterToken,
+    lite = false,
+    startDefaultKernel = false,
+    theme = 'light',
+    terminals = false,
+    useRunningKernelId,
+    useRunningKernelIndex = -1,
   } = props;
   const config = useMemo(() => {
-    return loadJupyterConfig(props);
-  }, [props]);
+    return loadJupyterConfig({
+      collaborative,
+      jupyterServerHttpUrl,
+      jupyterServerWsUrl, lite,
+      jupyterToken, terminals
+    });
+  }, [collaborative,
+    jupyterServerHttpUrl,
+    jupyterServerWsUrl,
+    jupyterToken, lite, terminals]);
   return (
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
@@ -70,7 +89,7 @@ export const Jupyter = (props: JupyterProps) => {
       <ThemeProvider colorMode={theme === 'light' ? "day" : "night"} dayScheme="light" nightScheme="dark_high_contrast">
         <BaseStyles>
           <Box color="fg.default" bg="canvas.default">
-            { !config.insideJupyterLab && !disableCssLoading && <JupyterLabCss theme={theme}/> }
+            {!config.insideJupyterLab && !disableCssLoading && <JupyterLabCss theme={theme} />}
             <JupyterContextProvider
               baseUrl={getJupyterServerHttpUrl()}
               collaborative={collaborative}
@@ -85,24 +104,13 @@ export const Jupyter = (props: JupyterProps) => {
               variant="default"
               wsUrl={getJupyterServerWsUrl()}
             >
-              { children }
+              {children}
             </JupyterContextProvider>
           </Box>
         </BaseStyles>
       </ThemeProvider>
     </ErrorBoundary>
   )
-}
-
-Jupyter.defaultProps = {
-  collaborative: false,
-  defaultKernelName: 'python',
-  disableCssLoading: false,
-  lite: false,
-  startDefaultKernel: true,
-  terminals: false,
-  theme: 'light',
-  useRunningKernelIndex: -1,
 }
 
 export default Jupyter;

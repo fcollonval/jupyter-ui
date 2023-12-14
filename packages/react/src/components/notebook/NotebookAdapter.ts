@@ -60,16 +60,16 @@ export class NotebookAdapter {
   private _uid: string;
   private _CellSidebar?: (props: any) => JSX.Element;
 
-  constructor(props: INotebookProps, store: any, serviceManager: ServiceManager) {
+  constructor(props: INotebookProps & {kernel: Kernel}, store: any, serviceManager: ServiceManager) {
     this._bundledIPyWidgets = props.bundledIPyWidgets;
     this._externalIPyWidgets = props.externalIPyWidgets;
-    this._ipywidgets = props.ipywidgets;
-    this._kernel = props.kernel!;
+    this._ipywidgets = props.ipywidgets ?? 'lab';
+    this._kernel = props.kernel;
     this._nbformat = props.nbformat;
-    this._nbgrader = props.nbgrader;
+    this._nbgrader = props.nbgrader ?? false;
     this._path = props.path;
-    this._readOnly = props.readOnly;
-    this._renderers = props.renderers;
+    this._readOnly = props.readOnly ?? false;
+    this._renderers = props.renderers ?? [];
     this._serviceManager = serviceManager;
     this._store = store;
     this._uid = props.uid;
